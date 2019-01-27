@@ -22,8 +22,8 @@
 #include <WiFiServerSecureBearSSL.h>
 #include <WiFiUdp.h>
 
-const char* ssid="ASUS";
-const char* password = "82Highland";
+const char* ssid=//Wi-Fi network;
+const char* password = //Wi-Fi password;
 const char* mqtt_server = "192.168.1.150";
 
 #define humidity_topic "sensor/humidity"
