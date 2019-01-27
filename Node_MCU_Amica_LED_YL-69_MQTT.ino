@@ -21,7 +21,7 @@
 #include <WiFiServerSecureBearSSL.h>
 #include <WiFiUdp.h>
 
-const char* ssid="ASUS";
+const char* ssid=//Wi-Fi network;
 const char* mqtt_server = "192.168.1.150";
 
 int sensor_pin = A0;       //set AO as pin for YL-69
