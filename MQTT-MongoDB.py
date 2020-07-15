@@ -27,9 +27,9 @@ def on_message(client, userdata, msg):
 
 #set up client for MongoDB   
 
-mongoClient=MongoClient('mongodb://tschang:82H%21ghland@plants-shard-00-00-l7uuf.mongdb.net:27017,plants-shard-00-01-l7uuf.mongodb.net:27017,plants-shard-00-02-l7uuf.mongodb.net:27017/basil?ssl=true&replicaSet=plants-shard-0&authSource=admin&retryWrites=true')
+mongoClient=MongoClient('mongodb://tschang:<password>@plants-shard-00-00-l7uuf.mongdb.net:27017,plants-shard-00-01-l7uuf.mongodb.net:27017,plants-shard-00-02-l7uuf.mongodb.net:27017/basil?ssl=true&replicaSet=plants-shard-0&authSource=admin&retryWrites=true')
 db=mongoClient.basil
-collection=db.january2019
+collection=db.july2020
 
 #initialize the client that should connect to the Mosquitto broker
 client = mqtt.Client()
