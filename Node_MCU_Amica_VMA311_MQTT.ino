@@ -1,10 +1,9 @@
+
 #include <ArduinoJson.h>
 #include <Arduino.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <PubSubClient.h>
-#include <BearSSLHelpers.h>
-#include <CertStoreBearSSL.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiAP.h>
 #include <ESP8266WiFiGeneric.h>
@@ -12,23 +11,22 @@
 #include <ESP8266WiFiScan.h>
 #include <ESP8266WiFiSTA.h>
 #include <ESP8266WiFiType.h>
+#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
 #include <WiFiClient.h>
 #include <WiFiClientSecure.h>
-#include <WiFiClientSecureAxTLS.h>
-#include <WiFiClientSecureBearSSL.h>
 #include <WiFiServer.h>
-#include <WiFiServerSecure.h>
-#include <WiFiServerSecureAxTLS.h>
-#include <WiFiServerSecureBearSSL.h>
 #include <WiFiUdp.h>
+#include <Wire.h>
 
-const char* ssid=//Wi-Fi network;
-const char* password = //Wi-Fi password;
+const char* ssid= //Wi-Fi network
+const char* password = //Wi-Fi password
 const char* mqtt_server = "192.168.1.150";
 
 #define humidity_topic "sensor/humidity"
 #define temperature_topic "sensor/temperature"
 
+#define DHTPIN 7
 #define DHTTYPE DHT11
 #define DHTPIN 2        //Connect the VMA311 sensor to Pin D4 of Node MCU
 
@@ -36,12 +34,21 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE, 11);
 
+//set LCD address to 0x38 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x38, 16, 2);
+
+char dataString[50] = {0};
+int a = 0;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   dht.begin();
   setup_wifi();
   client.setServer(mqtt_server, 1883);
+  lcd.begin(16,2);
+  lcd.init();
+  lcd.backlight();
 }
 
 void setup_wifi(){
@@ -93,7 +100,9 @@ void loop() {
     reconnect();
   }
   client.loop();
-
+  
+  lcd.home();
+  
   long now = millis();
   if(now - lastMsg > 2000){
     lastMsg = now;
@@ -102,7 +111,43 @@ void loop() {
   float c = dht.readTemperature();      //Celsius
   float f = dht.readTemperature(true);  //Fahrenheit
 
-  //do not publish temperature in Celsius
+  //set the cursor to (0,0);
+  lcd.setCursor(0,0);
+
+  //print temperature on LCD screen
+  lcd.print("Temperature ");
+  lcd.print(f,0);
+  lcd.print((char)223);
+  lcd.print("F");
+
+  //set the cursor to (16,1);
+  lcd.setCursor(0,1);
+
+  //print humidity on LCD screen
+  lcd.print("Humidity ");
+  lcd.print(h, 1);
+  lcd.print("%");
+
+  //a value increase every loop
+  a++;
+  
+  //convert a value to hexa
+  //sprintf(dataString,"%02x",a);
+
+  //send the data
+  Serial.println(dataString);
+
+  //print temperature to serial monitor
+  Serial.print("Temperature: ");
+  Serial.print(f, 1);
+
+  //print humidity to serial monitor
+  Serial.print("F, Humidity: ");
+  Serial.print(h, 0);
+  Serial.println("%");
+  delay(1000);
+  
+  //do not publish temperature in Celsius 
 //  if(checkBound(c, tempC, difference)){
 //    tempC = c;
 //    Serial.print("Temperature: ");
